@@ -210,15 +210,6 @@ class GalleryController {
       const base64Data = image_data.replace(/^data:image\/\w+;base64,/, '');
       const buffer = Buffer.from(base64Data, 'base64');
 
-      // Validate file size (max 10MB)
-      const maxSize = 10 * 1024 * 1024;
-      if (buffer.length > maxSize) {
-        return res.status(400).json({
-          success: false,
-          message: 'Image size too large. Maximum size is 10MB.'
-        });
-      }
-
       // Generate unique filename
       const timestamp = Date.now();
       const extension = path.extname(image_name) || '.jpg';
