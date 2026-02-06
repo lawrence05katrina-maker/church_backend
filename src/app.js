@@ -46,6 +46,11 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '50mb' })); 
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
@@ -174,6 +179,17 @@ const initializeFathers = async () => {
   }
 };
 
+// Initialize prayer requests table
+const initializePrayerRequests = async () => {
+  try {
+    const PrayerModel = require("./models/prayerModel");
+    await PrayerModel.createTable();
+    console.log('Prayer requests system initialized successfully');
+  } catch (error) {
+    console.error('Error initializing prayer requests system:', error.message);
+  }
+};
+
 setTimeout(() => {
   initializeAdmin();
   initializeGallery();
@@ -186,6 +202,7 @@ setTimeout(() => {
   initializePayments();
   initializeDonations();
   initializeFathers();
+  initializePrayerRequests();
 }, 1000);
 
 app.use("/api/prayers", prayerRoutes);

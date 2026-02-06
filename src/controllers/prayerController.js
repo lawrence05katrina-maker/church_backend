@@ -3,25 +3,37 @@ const pool = require("../db/db");
 // CREATE prayer request
 exports.createPrayer = async (req, res) => {
   try {
-    const { name, email, prayer } = req.body;
+    console.log('=== PRAYER REQUEST RECEIVED ===');
+    console.log('Request body:', req.body);
+    console.log('Request headers:', req.headers);
+    
+    // Accept both 'prayer' and 'prayer_intention' for backward compatibility
+    const { name, email, prayer, prayer_intention } = req.body;
+    const prayerText = prayer_intention || prayer;
 
-    if (!name || !prayer) {
+    if (!name || !prayerText) {
+      console.log('Validation failed - missing fields:', { name: !!name, prayer: !!prayerText });
       return res.status(400).json({ message: "Name and prayer are required" });
     }
 
+    console.log('Attempting to insert prayer request...');
     const result = await pool.query(
       `INSERT INTO prayer_requests (name, email, prayer)
        VALUES ($1, $2, $3) RETURNING *`,
-      [name, email, prayer]
+      [name, email || null, prayerText]
     );
 
+    console.log('Prayer request created successfully:', result.rows[0]);
     res.status(201).json({
       message: "Prayer request submitted successfully",
       data: result.rows[0],
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    console.error('=== PRAYER CREATION ERROR ===');
+    console.error('Error details:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
