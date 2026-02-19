@@ -91,9 +91,10 @@ class ContactModel {
           }
         },
         {
-          facebook: "https://facebook.com/devasahayamshrine",
-          youtube: "https://youtube.com/@devasahayamshrine",
-          instagram: "https://instagram.com/devasahayamshrine"
+          website: "https://www.devasahayammountshrine.com",
+          facebook: "https://www.facebook.com/saintdevasahayam",
+          youtube: "https://www.youtube.com/@SaintDevasahayamShrine",
+          instagram: "https://www.instagram.com/st.devasahayamshrine/"
         },
         {
           by_air: {

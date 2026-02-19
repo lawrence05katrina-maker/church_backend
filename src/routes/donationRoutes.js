@@ -47,8 +47,20 @@ router.get("/purposes", async (req, res) => {
   }
 });
 
-// Submit donation
-router.post("/submit", upload.single("screenshot"), async (req, res) => {
+// Submit donation with error handling middleware
+router.post("/submit", (req, res, next) => {
+  upload.single("screenshot")(req, res, (err) => {
+    if (err) {
+      console.error("Multer error:", err);
+      return res.status(400).json({
+        success: false,
+        message: err.message || "File upload failed",
+        error: err.message,
+      });
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const {
       name,

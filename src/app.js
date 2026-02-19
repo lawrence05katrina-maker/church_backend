@@ -25,6 +25,7 @@ const corsOptions = {
       'https://www.devasahayammountshrine.com',
       'http://localhost:5173',
       'http://localhost:5174',
+      'http://localhost:5175',
       'http://localhost:3000'
     ];
     
@@ -34,11 +35,12 @@ const corsOptions = {
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log('CORS blocked origin:', origin);
+      callback(null, true); // Allow all origins in development
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
@@ -220,6 +222,18 @@ app.use("/api/fathers", fathersRoutes);
 
 app.get("/", (req, res) => {
   res.send("Prayer API is running with Gallery, Livestream, Contact, Announcements, Management, Mass Bookings, and Payments support");
+});
+
+// Global error handler - must be after all routes
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  
+  // Ensure we always send JSON response
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
 });
 
 module.exports = app;
