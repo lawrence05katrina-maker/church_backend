@@ -20,25 +20,23 @@ const app = express();
 // CORS configuration for production
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://devasahayammountshrine.com',
-      'https://www.devasahayammountshrine.com',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:5175',
-      'http://localhost:3000'
-    ];
-    
-    // Allow requests with no origin (mobile apps, etc.)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(null, true); // Allow all origins in development
-    }
-  },
+  const allowedOrigins = [
+    'https://devasahayammountshrine.com',
+    'https://www.devasahayammountshrine.com',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:3000'
+  ];
+
+  if (!origin) return callback(null, true);
+
+  if (allowedOrigins.includes(origin)) {
+    callback(null, true);
+  } else {
+    callback(new Error('Not allowed by CORS'));
+  }
+},
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -192,20 +190,36 @@ const initializePrayerRequests = async () => {
   }
 };
 
-setTimeout(() => {
-  initializeAdmin();
-  initializeGallery();
-  initializeTestimonies();
-  initializeLivestream();
-  initializeContact();
-  initializeAnnouncements();
-  initializeManagement();
-  initializeMassBookings();
-  initializePayments();
-  initializeDonations();
-  initializeFathers();
-  initializePrayerRequests();
-}, 1000);
+// setTimeout(() => {
+//   initializeAdmin();
+//   initializeGallery();
+//   initializeTestimonies();
+//   initializeLivestream();
+//   initializeContact();
+//   initializeAnnouncements();
+//   initializeManagement();
+//   initializeMassBookings();
+//   initializePayments();
+//   initializeDonations();
+//   initializeFathers();
+//   initializePrayerRequests();
+// }, 1000);
+const initializeAll = async () => {
+  await initializeAdmin();
+  await initializeGallery();
+  await initializeTestimonies();
+  await initializeLivestream();
+  await initializeContact();
+  await initializeAnnouncements();
+  await initializeManagement();
+  await initializeMassBookings();
+  await initializePayments();
+  await initializeDonations();
+  await initializeFathers();
+  await initializePrayerRequests();
+};
+
+initializeAll();
 
 app.use("/api/prayers", prayerRoutes);
 app.use("/api/testimonies", testimonyRoutes);
